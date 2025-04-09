@@ -3,30 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <title>整理券発行</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2em; text-align: center; }
+    canvas { margin-top: 1em; }
+  </style>
 </head>
 <body>
-  <h1>整理券発行システム</h1>
-  <button onclick="issueTicket()">整理券を発行</button>
+  <h1>🎫 整理券を発行</h1>
+  <button onclick="issueTicket()">整理券を発行する</button>
   <p id="ticketInfo"></p>
   <div id="qrcode"></div>
 
   <script>
+    const baseUrl = "https://rato009.github.io/ticket-system";
+
     function issueTicket() {
       let ticketNumber = parseInt(localStorage.getItem("lastTicket") || "0") + 1;
       localStorage.setItem("lastTicket", ticketNumber);
 
-      // 整理券ID付きURLを作成
       const ticketId = `T-${ticketNumber}`;
-      const url = `${location.origin}/status.html?ticket=${ticketId}`;
-      document.getElementById("ticketInfo").innerText = `あなたの番号：${ticketId}`;
+      const statusUrl = `${baseUrl}/status.html?ticket=${ticketId}`;
 
-      // QRコード生成
-      QRCode.toCanvas(document.getElementById("qrcode"), url, function (error) {
-        if (error) console.error(error);
+      document.getElementById("ticketInfo").innerText = `あなたの整理券番号：${ticketId}`;
+
+      const qrDiv = document.getElementById("qrcode");
+      qrDiv.innerHTML = "";
+
+      QRCode.toCanvas(statusUrl, function (err, canvas) {
+        if (err) {
+          console.error(err);
+          qrDiv.innerText = "QRコードの生成に失敗しました。";
+          return;
+        }
+        qrDiv.appendChild(canvas);
       });
 
-      // 整理券番号を保存（status表示のため）
       let queue = JSON.parse(localStorage.getItem("queue") || "[]");
       queue.push(ticketId);
       localStorage.setItem("queue", JSON.stringify(queue));

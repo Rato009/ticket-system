@@ -2,15 +2,18 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>呼出番号管理</title>
+  <title>呼出管理</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; text-align: center; }
+    button { font-size: 1.2em; margin-top: 1em; }
+  </style>
 </head>
 <body>
-  <h1>管理者画面</h1>
-  <p id="now">現在の呼出番号：<span id="current"></span></p>
+  <h1>🔔 呼出管理画面</h1>
+  <p>現在の呼出番号：<strong id="current">T-0</strong></p>
   <button onclick="next()">次の人を呼び出す</button>
 
   <script>
-    // 呼出番号を表示
     function showCurrent() {
       const current = localStorage.getItem("currentTicket") || "T-0";
       document.getElementById("current").innerText = current;
