@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>整理券発行</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+  <h1>整理券発行システム</h1>
+  <button onclick="issueTicket()">整理券を発行</button>
+  <p id="ticketInfo"></p>
+  <div id="qrcode"></div>
+
+  <script>
+    function issueTicket() {
+      let ticketNumber = parseInt(localStorage.getItem("lastTicket") || "0") + 1;
+      localStorage.setItem("lastTicket", ticketNumber);
+
+      // 整理券ID付きURLを作成
+      const ticketId = `T-${ticketNumber}`;
+      const url = `${location.origin}/status.html?ticket=${ticketId}`;
+      document.getElementById("ticketInfo").innerText = `あなたの番号：${ticketId}`;
+
+      // QRコード生成
+      QRCode.toCanvas(document.getElementById("qrcode"), url, function (error) {
+        if (error) console.error(error);
+      });
+
+      // 整理券番号を保存（status表示のため）
+      let queue = JSON.parse(localStorage.getItem("queue") || "[]");
+      queue.push(ticketId);
+      localStorage.setItem("queue", JSON.stringify(queue));
+    }
+  </script>
+</body>
+</html>
