@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>整理券ステータス</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+  </style>
 </head>
 <body>
-  <h1>あなたの整理券状況</h1>
+  <h1>📋 あなたの整理券状況</h1>
   <p id="myTicket"></p>
   <p id="currentNumber"></p>
   <p id="waitCount"></p>
 
   <script>
-    // クエリパラメータからticket番号を取得
     const params = new URLSearchParams(window.location.search);
     const myTicket = params.get("ticket");
 
@@ -20,11 +22,9 @@
     } else {
       document.getElementById("myTicket").innerText = `あなたの番号：${myTicket}`;
 
-      // 現在の呼出番号を取得
       const current = localStorage.getItem("currentTicket") || "T-0";
       document.getElementById("currentNumber").innerText = `現在の呼出番号：${current}`;
 
-      // 待ち人数を計算
       const queue = JSON.parse(localStorage.getItem("queue") || "[]");
       const currentIndex = queue.indexOf(current);
       const myIndex = queue.indexOf(myTicket);
