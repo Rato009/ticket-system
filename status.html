@@ -2,43 +2,28 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>整理券ステータス</title>
-  <style>
-    body { font-family: sans-serif; padding: 2em; }
-  </style>
-  
+  <title>呼び出し状況</title>
+  <script>
+    const apiUrl = "https://あなたの-worker-url.workers.dev";
+
+    async function loadStatus() {
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const urlParams = new URLSearchParams(window.location.search);
+      const ticket = parseInt(urlParams.get("ticket"), 10);
+      document.getElementById("current").innerText = data.current;
+      document.getElementById("your").innerText = ticket;
+      const remaining = ticket - data.current;
+      document.getElementById("wait").innerText = remaining > 0 ? remaining : 0;
+    }
+
+    window.onload = loadStatus;
+  </script>
 </head>
 <body>
-  <h1>📋 あなたの整理券状況</h1>
-  <p id="myTicket"></p>
-  <p id="currentNumber"></p>
-  <p id="waitCount"></p>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const myTicket = params.get("ticket");
-
-    if (!myTicket) {
-      document.body.innerHTML = "<p>整理券情報が見つかりません。</p>";
-    } else {
-      document.getElementById("myTicket").innerText = `あなたの番号：${myTicket}`;
-
-      const current = localStorage.getItem("currentTicket") || "T-0";
-      document.getElementById("currentNumber").innerText = `現在の呼出番号：${current}`;
-
-      const queue = JSON.parse(localStorage.getItem("queue") || "[]");
-      const currentIndex = queue.indexOf(current);
-      const myIndex = queue.indexOf(myTicket);
-
-      if (myIndex === -1) {
-        document.getElementById("waitCount").innerText = "この整理券は現在の待ちリストに含まれていません。";
-      } else if (myIndex <= currentIndex) {
-        document.getElementById("waitCount").innerText = "まもなく呼び出されます。";
-      } else {
-        const waitCount = myIndex - currentIndex;
-        document.getElementById("waitCount").innerText = `あなたの前に ${waitCount} 人待っています。`;
-      }
-    }
-  </script>
+  <h1>呼び出し状況確認</h1>
+  <p>現在の呼び出し番号: <span id="current">--</span></p>
+  <p>あなたの番号: <span id="your">--</span></p>
+  <p>あと <span id="wait">--</span> 人前です</p>
 </body>
 </html>
